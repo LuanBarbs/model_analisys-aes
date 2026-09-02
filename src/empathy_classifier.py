@@ -14,7 +14,7 @@ import time
 
 from sklearn.metrics import f1_score
 
-from transformers import RobertaTokenizer
+from transformers import XLMRobertaTokenizer
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data import TensorDataset, random_split
 
@@ -34,7 +34,7 @@ class EmpathyClassifier():
 			EX_model_path = 'output/sample.pth',
 			batch_size=1):
 		
-		self.tokenizer = RobertaTokenizer.from_pretrained('roberta-base', do_lower_case=True)
+		self.tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
 		self.batch_size = batch_size
 		self.device = device
 

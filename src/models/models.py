@@ -11,7 +11,7 @@ from .file_utils import add_start_docstrings, add_start_docstrings_to_callable
 
 from transformers import GPT2Model
 from transformers import AutoModelWithLMHead, AutoTokenizer
-
+from transformers import XLMRobertaModel
 
 ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP = {
 	"roberta-base": "https://s3.amazonaws.com/models.huggingface.co/bert/roberta-base-pytorch_model.bin",
@@ -90,7 +90,7 @@ class MultiHeadAttention(nn.Module):
 		
 		return output
 
-
+# Inútil para xml-roberta
 class SeekerEncoder(BertPreTrainedModel):
 	config_class = RobertaConfig
 	pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
@@ -108,7 +108,7 @@ class SeekerEncoder(BertPreTrainedModel):
 	def set_input_embeddings(self, value):
 		self.roberta.embeddings.word_embeddings = value
 	
-
+# inútil para xml-roberta
 class ResponderEncoder(BertPreTrainedModel):
 	config_class = RobertaConfig
 	pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
@@ -140,16 +140,9 @@ class BiEncoderAttentionWithRationaleClassification(nn.Module):
 
 		self.apply(self._init_weights)
 
-		self.seeker_encoder = SeekerEncoder.from_pretrained(
-								"roberta-base", # Use the 12-layer BERT model, with an uncased vocab.
-								output_attentions = False, # Whether the model returns attentions weights.
-								output_hidden_states = False)
+		self.seeker_encoder = XLMRobertaModel.from_pretrained("xlm-roberta-base")
 
-		self.responder_encoder = ResponderEncoder.from_pretrained(
-								"roberta-base", # Use the 12-layer BERT model, with an uncased vocab.
-								output_attentions = False, # Whether the model returns attentions weights.
-								output_hidden_states = False)
-
+		self.responder_encoder = XLMRobertaModel.from_pretrained("xlm-roberta-base")
 	
 	def _init_weights(self, module):
 		""" Initialize the weights """
@@ -185,7 +178,7 @@ class BiEncoderAttentionWithRationaleClassification(nn.Module):
 		lambda_EI=1,
 		lambda_RE=0.1
 	):
-		outputs_SP = self.seeker_encoder.roberta(
+		outputs_SP = self.seeker_encoder(
 			input_ids_SP,
 			attention_mask=attention_mask_SP,
 			token_type_ids=token_type_ids_SP,
@@ -195,7 +188,7 @@ class BiEncoderAttentionWithRationaleClassification(nn.Module):
 		)
 
 
-		outputs_RP = self.responder_encoder.roberta(
+		outputs_RP = self.responder_encoder(
 			input_ids_RP,
 			attention_mask=attention_mask_RP,
 			token_type_ids=token_type_ids_RP,

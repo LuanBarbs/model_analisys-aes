@@ -14,7 +14,7 @@ import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data import TensorDataset, random_split
 
-from transformers import RobertaTokenizer
+from transformers import XLMRobertaTokenizer
 from transformers import AdamW, RobertaConfig
 from transformers import get_linear_schedule_with_warmup
 
@@ -102,7 +102,7 @@ if args.do_validation:
 '''
 Tokenize input
 '''
-tokenizer = RobertaTokenizer.from_pretrained('roberta-base', do_lower_case=True)
+tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
 
 tokenizer_RP = tokenizer.batch_encode_plus(df.response_post, add_special_tokens=True,max_length=args.max_len, pad_to_max_length=True, return_attention_masks=True)
 input_ids_RP = torch.tensor(tokenizer_RP['input_ids'])

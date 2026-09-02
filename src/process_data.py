@@ -5,9 +5,9 @@ import re
 import numpy as np
 import argparse
 
-from transformers import RobertaTokenizer
+from transformers import XLMRobertaTokenizer
 
-tokenizer = RobertaTokenizer.from_pretrained('roberta-base', do_lower_case=True)
+tokenizer = XLMRobertaTokenizer.from_pretrained('xlm-roberta-base')
 
 parser = argparse.ArgumentParser("process_data")
 parser.add_argument("--input_path", type=str, help="path to input data")
@@ -53,7 +53,7 @@ for row in csv_reader:
 
 	for idx in range(len(response_words)):
 		curr_word = response_words[idx]
-		if curr_word.startswith('Ġ'):
+		if curr_word.startswith('▁'):
 			curr_word = curr_word[1:]
 		response_words_position[curr_position: curr_position+len(curr_word)+1] = idx
 		curr_position += len(curr_word)+1
